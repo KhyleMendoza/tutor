@@ -1,0 +1,55 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --color1:#44916a;
+    --color2:#285238;
+    --color3:#6BA368;
+}
+
+nav {
+    background-color: var(--color1);
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+}
+
+nav > div > a {
+    text-decoration: none;
+    margin: 0 10px;
+    color: white;
+}
+
+.home {
+    height:100vh;
+    background-color: var(--color2);
+}
+
+.about {
+    height:100vh;
+    background-color: var(--color3);
+}
+
+.portfolio {
+    height: 100vh;
+    background-color: var(--color2);
+}
+
+.news {
+    height: 100vh;
+    background-color: var(--color3);
+}
+
+.contact {
+    height:100vh;
+    background-color: var(--color2);
+}
+
+footer{
+    height:50vh;
+    background-color: var(--color1);
+}
