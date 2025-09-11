@@ -6,7 +6,13 @@
 // // document.getElementsByClassName("result")[2].innerHTML = result;
 // document.getElementById("result").innerHTML = result;
 
-let result = 0
+var result = 0
+var person = "Khyle"
+var gender = "Male"
+var age = 22
+
+console.log("my name is " + person + ", my gender is " + gender + ", my age is " + age)
+console.log(`My name is ${person}, my gender is ${gender}, my age is ${age}`)
 // console.log(result)
 document.getElementById("result").innerHTML = result;
 
