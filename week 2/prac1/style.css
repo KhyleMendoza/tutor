@@ -1,0 +1,30 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: none;
+    
+}
+
+nav {
+    height: 60px;
+    background-color: pink;
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    align-items: center;
+    padding: 0 10px;
+}
+
+nav > div {
+    display: flex;
+}
+
+nav > div > a{
+    font-size: 16px;
+    text-decoration: none;
+    margin: 0 10px;
+    color: #000000;
+}
+
+
+
