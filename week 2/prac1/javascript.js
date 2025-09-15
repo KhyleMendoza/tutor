@@ -4,7 +4,7 @@ console.log(score);
 
 document.getElementById("score").addEventListener("click", function() {
     score++
-    document.getElementById("coins").innerText= score
+    document.getElementById("coins").innerText= score;
 })
 
 

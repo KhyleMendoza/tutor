@@ -26,5 +26,19 @@ nav > div > a{
     color: #000000;
 }
 
+.cookie {
+    background-color: antiquewhite;
+}
 
+.Store {
+    background-color: aquamarine;
+}
 
+.container {
+    display: flex;
+    height: 95vh;
+}
+
+.container > div {
+    width: 100%;
+}
