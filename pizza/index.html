@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizza Clicker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fcebeb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #4a2d1d;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 1200px;
+            margin: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            background-color: #fff;
+        }
+
+        .header {
+            background-color: #e57373;
+            color: white;
+            padding: 1rem 2rem;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            border-bottom: 5px solid #d32f2f;
+        }
+
+        .game-content {
+            display: flex;
+            flex-direction: row;
+            flex-grow: 1;
+        }
+
+        .clicker-section, .store-section {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .clicker-section {
+            background-color: #fff3e0;
+            width: 60%;
+            position: relative;
+        }
+        .store-section {
+            background-color: #ffe0b2;
+            width: 40%;
+            border-left: 3px dashed #ffb74d;
+        }
+
+        .pizza-display {
+            font-size: 5rem;
+            font-weight: 700;
+            color: #4a2d1d;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .pizza-image {
+            width: 300px;
+            cursor: pointer;
+            transition: transform 0.1s ease-in-out;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .pizza-image:active {
+            transform: scale(0.95);
+        }
+        .pizza-image:hover {
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .flying-text {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d32f2f;
+            opacity: 0;
+            pointer-events: none;
+            animation: fade-up 1s forwards;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        @keyframes fade-up {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+        }
+
+        .store-header {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #d32f2f;
+            margin-bottom: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .upgrade-list {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+        }
+
+        .upgrade-item {
+            background-color: #ffcc80;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid #ff9800;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .upgrade-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .upgrade-info {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .upgrade-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4a2d1d;
+        }
+        .upgrade-price {
+            font-size: 1.25rem;
+            color: #8d6e63;
+        }
+        .upgrade-count {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #d32f2f;
+            margin-left: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .game-content {
+                flex-direction: column;
+            }
+            .clicker-section, .store-section {
+                width: 100%;
+            }
+            .store-section {
+                border-left: none;
+                border-top: 3px dashed #ffb74d;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="game-container">
+        <header class="header">Pizza Clicker</header>
+        <main class="game-content">
+            <div class="clicker-section">
+                <div id="pizza-display" class="pizza-display">0 Pizzas</div>
+                <img id="pizza-image" src="pizza.png" class="pizza-image" alt="A delicious pizza">
+            </div>
+            <div class="store-section">
+                <h2 class="store-header">Store</h2>
+                <ul id="upgrade-list" class="upgrade-list"></ul>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let pizzas = 0;
+            let pizzasPerClick = 1;
+            let passivePizzasPerSecond = 0;
+
+            const upgrades = [
+                { name: 'Extra Cheese', price: 15, passive: 0.1, perClick: 0, count: 0 },
+                { name: 'Dough Roller', price: 100, passive: 1, perClick: 0, count: 0 },
+                { name: 'Pizza Cutter', price: 500, passive: 0, perClick: 5, count: 0 },
+                { name: 'Delivery Boy', price: 1000, passive: 10, perClick: 0, count: 0 },
+                { name: 'Oven', price: 12000, passive: 100, perClick: 0, count: 0 },
+                { name: 'Restaurant', price: 100000, passive: 1000, perClick: 0, count: 0 },
+            ];
+
+            const pizzaImage = document.getElementById('pizza-image');
+            const pizzaDisplay = document.getElementById('pizza-display');
+            const upgradeList = document.getElementById('upgrade-list');
+
+            function updateDisplay() {
+                pizzaDisplay.textContent = `${Math.floor(pizzas)} Pizzas`;
+            }
+
+            function createUpgradeElement(upgrade) {
+                const li = document.createElement('li');
+                li.className = 'upgrade-item';
+                li.innerHTML = `
+                    <div class="upgrade-info">
+                        <span class="upgrade-name">${upgrade.name}</span>
+                        <span class="upgrade-price">Price: ${Math.floor(upgrade.price)} Pizzas</span>
+                        <span class="upgrade-per-click" style="display: ${upgrade.perClick > 0 ? 'block' : 'none'};"> +${upgrade.perClick} per click</span>
+                        <span class="upgrade-passive" style="display: ${upgrade.passive > 0 ? 'block' : 'none'};"> +${upgrade.passive * 10} per second</span>
+                    </div>
+                    <span class="upgrade-count">${upgrade.count}</span>
+                `;
+                li.addEventListener('click', () => buyUpgrade(upgrade));
+                return li;
+            }
+
+            function renderUpgrades() {
+                upgradeList.innerHTML = '';
+                upgrades.forEach(upgrade => {
+                    upgradeList.appendChild(createUpgradeElement(upgrade));
+                });
+            }
+
+            function buyUpgrade(upgrade) {
+                if (pizzas >= upgrade.price) {
+                    pizzas -= upgrade.price;
+                    upgrade.count++;
+                    pizzasPerClick += upgrade.perClick;
+                    passivePizzasPerSecond += upgrade.passive;
+                    
+                    upgrade.price = Math.round(upgrade.price * 1.15);
+                    
+                    updateDisplay();
+                    renderUpgrades();
+                }
+            }
+
+            function clickPizza(event) {
+                pizzas += pizzasPerClick;
+                updateDisplay();
+                
+                const flyingText = document.createElement('span');
+                flyingText.className = 'flying-text';
+                flyingText.textContent = `+${pizzasPerClick}`;
+                
+                const bounds = pizzaImage.getBoundingClientRect();
+                flyingText.style.left = `${event.clientX}px`;
+                flyingText.style.top = `${event.clientY}px`;
+                
+                document.body.appendChild(flyingText);
+                
+                setTimeout(() => {
+                    flyingText.remove();
+                }, 1000);
+            }
+
+            function passiveGeneration() {
+                pizzas += passivePizzasPerSecond;
+                updateDisplay();
+            }
+
+            pizzaImage.addEventListener('click', clickPizza);
+            
+            // Passive income loop
+            setInterval(passiveGeneration, 100);
+
+            // Initial render
+            updateDisplay();
+            renderUpgrades();
+        });
+    </script>
+</body>
+</html>
